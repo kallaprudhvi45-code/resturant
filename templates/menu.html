@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Menu | Gourmet Delight Restaurant{% endblock %}
+
+{% block content %}
+<section class="max-w-screen-xl mx-auto py-12 px-4">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+        <div>
+            <h1 class="text-4xl font-bold mb-2">Our Culinary Menu</h1>
+            <p class="text-slate-500">Explore our wide variety of appetizers, entrees, and desserts.</p>
+        </div>
+        
+        <!-- Search Bar -->
+        <form method="GET" action="{% url 'menu:menu_view' %}" class="w-full md:w-96">
+            <label for="search" class="mb-2 text-sm font-medium text-slate-900 sr-only">Search</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-slate-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </div>
+                <input type="search" name="search" id="search" value="{{ search_query|default:'' }}" class="block w-full p-4 ps-10 text-sm text-slate-900 border border-slate-300 rounded-2xl bg-white focus:ring-orange-500 focus:border-orange-500 shadow-sm" placeholder="Search for food...">
+                <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-orange-600 hover:bg-orange-700 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-xl text-sm px-4 py-2 transition-colors">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- Sidebar Filters -->
+        <aside class="lg:col-span-1 space-y-8">
+            <!-- Category Filter -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="font-bold text-lg mb-4 flex items-center">
+                    <svg class="w-5 h-5 me-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    Categories
+                </h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{% url 'menu:menu_view' %}" class="block py-2 px-3 rounded-lg {% if not current_category %}bg-orange-50 text-orange-600 font-bold{% else %}text-slate-600 hover:bg-slate-50{% endif %} transition-colors">
+                            All Categories
+                        </a>
+                    </li>
+                    {% for cat in all_categories %}
+                    <li>
+                        <a href="?category={{ cat.slug }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_price %}&price={{ current_price }}{% endif %}" class="block py-2 px-3 rounded-lg {% if current_category == cat.slug %}bg-orange-50 text-orange-600 font-bold{% else %}text-slate-600 hover:bg-slate-50{% endif %} transition-colors">
+                            {{ cat.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Subcategory Filter -->
+            {% if subcategories %}
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="font-bold text-lg mb-4 flex items-center">
+                    <svg class="w-5 h-5 me-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    Sub-Categories
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <a href="?{% if current_category %}category={{ current_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_price %}&price={{ current_price }}{% endif %}" class="px-3 py-1 text-xs rounded-full border {% if not current_subcategory %}bg-slate-900 text-white border-slate-900{% else %}bg-slate-50 text-slate-600 border-slate-200 hover:border-orange-500{% endif %} transition-all">
+                        All
+                    </a>
+                    {% for subcat in subcategories %}
+                    <a href="?subcategory={{ subcat.id }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_price %}&price={{ current_price }}{% endif %}" class="px-3 py-1 text-xs rounded-full border {% if current_subcategory == subcat.id|stringformat:'s' %}bg-slate-900 text-white border-slate-900{% else %}bg-slate-50 text-slate-600 border-slate-200 hover:border-orange-500{% endif %} transition-all">
+                        {{ subcat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Price Filter -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="font-bold text-lg mb-4 flex items-center">
+                    <svg class="w-5 h-5 me-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Price Range
+                </h3>
+                <div class="space-y-2">
+                    <a href="?price=low{% if current_category %}&category={{ current_category }}{% endif %}{% if current_subcategory %}&subcategory={{ current_subcategory }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" class="flex items-center justify-between p-3 rounded-xl border {% if current_price == 'low' %}bg-orange-50 border-orange-500 text-orange-600{% else %}bg-slate-50 border-slate-200 text-slate-600 hover:border-orange-200{% endif %} transition-all">
+                        <span class="text-sm font-medium">Under ₹10</span>
+                        <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                    <a href="?price=mid{% if current_category %}&category={{ current_category }}{% endif %}{% if current_subcategory %}&subcategory={{ current_subcategory }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" class="flex items-center justify-between p-3 rounded-xl border {% if current_price == 'mid' %}bg-orange-50 border-orange-500 text-orange-600{% else %}bg-slate-50 border-slate-200 text-slate-600 hover:border-orange-200{% endif %} transition-all">
+                        <span class="text-sm font-medium">₹10 - ₹15</span>
+                        <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                    <a href="?price=high{% if current_category %}&category={{ current_category }}{% endif %}{% if current_subcategory %}&subcategory={{ current_subcategory }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" class="flex items-center justify-between p-3 rounded-xl border {% if current_price == 'high' %}bg-orange-50 border-orange-500 text-orange-600{% else %}bg-slate-50 border-slate-200 text-slate-600 hover:border-orange-200{% endif %} transition-all">
+                        <span class="text-sm font-medium">Above ₹15</span>
+                        <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                    {% if current_price %}
+                    <a href="?{% if current_category %}category={{ current_category }}{% endif %}{% if current_subcategory %}subcategory={{ current_subcategory }}{% endif %}{% if search_query %}search={{ search_query }}{% endif %}" class="text-xs text-slate-400 hover:text-orange-500 block text-center mt-2 decoration-dotted underline">Clear Price Filter</a>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Menu Grid -->
+        <div class="lg:col-span-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {% for item in items %}
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-100 flex flex-col h-full group">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-slate-900 px-3 py-1 rounded-full text-sm font-bold shadow-sm">
+                            ₹{{ item.price }}
+                        </div>
+                        {% if item.is_best_seller %}
+                        <div class="absolute top-3 left-3 bg-orange-600 text-white px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">
+                            Best Seller
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-bold text-slate-900">{{ item.name }}</h3>
+                        </div>
+                        <p class="text-slate-500 text-sm line-clamp-2 mb-4 flex-grow">{{ item.description }}</p>
+                        <div class="flex items-center justify-between mt-auto">
+                            <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded-md uppercase font-bold">{{ item.category.name }}</span>
+                            <a href="{% url 'orders:cart_add' item.id %}" class="bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-lg transition-colors shadow-md shadow-orange-600/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full py-20 text-center animate__animated animate__fadeIn">
+                    <div class="bg-slate-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">No Items Found</h3>
+                    <p class="text-slate-500 max-w-md mx-auto mb-8">We couldn't find any dishes matching your filters. Try adjusting your search or category selection.</p>
+                    <a href="{% url 'menu:menu_view' %}" class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-full font-bold transition-all shadow-lg">Clear All Filters</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

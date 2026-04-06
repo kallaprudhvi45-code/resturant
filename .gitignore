@@ -1,0 +1,10 @@
+# Django
+*.log
+*.pot
+*.sqlite3
+__pycache__/
+*.py[cod]
+.env
+staticfiles/
+media/
+.vscode/
