@@ -15,8 +15,9 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 import cloudinary
+import cloudinary.api
 
-# Load environment variables from .env file
+# Load environment variables from .env file (for local development)
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -40,6 +41,32 @@ CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://resturant-1-vd
 # Security settings for production
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
+
+# ============================================================================
+# CLOUDINARY INITIALIZATION - MUST BE BEFORE INSTALLED_APPS
+# ============================================================================
+_cloudinary_url = os.getenv('CLOUDINARY_URL')
+_cloudinary_cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME')
+_cloudinary_api_key = os.getenv('CLOUDINARY_API_KEY')
+_cloudinary_api_secret = os.getenv('CLOUDINARY_API_SECRET')
+
+# Priority: CLOUDINARY_URL > individual credentials
+if _cloudinary_url:
+    cloudinary.config(cloudinary_url=_cloudinary_url)
+else:
+    cloudinary.config(
+        cloud_name=_cloudinary_cloud_name,
+        api_key=_cloudinary_api_key,
+        api_secret=_cloudinary_api_secret
+    )
+
+# Set CLOUDINARY_STORAGE for django-cloudinary-storage package
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': _cloudinary_cloud_name,
+    'API_KEY': _cloudinary_api_key,
+    'API_SECRET': _cloudinary_api_secret,
+}
+# ============================================================================
 
 
 # Application definition
@@ -160,32 +187,7 @@ STORAGES = {
     },
 }
 
-# Cloudinary configuration - IMPORTANT: must initialize SDK before django-cloudinary-storage imports
-cloudinary_url = os.getenv('CLOUDINARY_URL')
-cloudinary_cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME')
-cloudinary_api_key = os.getenv('CLOUDINARY_API_KEY')
-cloudinary_api_secret = os.getenv('CLOUDINARY_API_SECRET')
-
-# Initialize cloudinary SDK - django-cloudinary-storage uses this for authentication
-if cloudinary_url:
-    cloudinary.config(cloudinary_url=cloudinary_url)
-elif all([cloudinary_cloud_name, cloudinary_api_key, cloudinary_api_secret]):
-    cloudinary.config(
-        cloud_name=cloudinary_cloud_name,
-        api_key=cloudinary_api_key,
-        api_secret=cloudinary_api_secret
-    )
-
-# Set CLOUDINARY_STORAGE only if all values are available
-CLOUDINARY_STORAGE = {}
-if all([cloudinary_cloud_name, cloudinary_api_key, cloudinary_api_secret]):
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': cloudinary_cloud_name,
-        'API_KEY': cloudinary_api_key,
-        'API_SECRET': cloudinary_api_secret,
-    }
-
-# Ensure Django uses Cloudinary for file storage
+# Ensure Django uses Cloudinary for file storage (explicit backend references)
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
