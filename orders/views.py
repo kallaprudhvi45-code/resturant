@@ -162,8 +162,8 @@ def checkout(request):
                   f"Total: ₹{total_amount}"
                   
         encoded_message = urllib.parse.quote(message)
-        # Using whatsapp:// to ensure it tries to open the mobile app directly
-        whatsapp_url = f"whatsapp://send?phone={clean_number}&text={encoded_message}"
+        # Using https://api.whatsapp.com/ to ensure compatibility with both mobile and WhatsApp Web
+        whatsapp_url = f"https://api.whatsapp.com/send?phone={clean_number}&text={encoded_message}"
         
         # Redirect logic: we want to show a success page with the review popup and then redirect to whatsapp
         return render(request, 'order_success.html', {'whatsapp_url': whatsapp_url})

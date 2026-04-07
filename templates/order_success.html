@@ -20,7 +20,7 @@
     {% endif %}
 
     <div class="flex flex-col sm:flex-row gap-6 justify-center">
-        <a id="whatsapp-btn" href="{{ whatsapp_url }}" class="bg-[#25D366] hover:bg-[#128C7E] text-white px-10 py-5 rounded-3xl text-xl font-bold shadow-2xl shadow-green-500/20 transition-all transform hover:scale-105 inline-flex items-center justify-center">
+        <a id="whatsapp-btn" href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="bg-[#25D366] hover:bg-[#128C7E] text-white px-10 py-5 rounded-3xl text-xl font-bold shadow-2xl shadow-green-500/20 transition-all transform hover:scale-105 inline-flex items-center justify-center">
             <svg class="w-8 h-8 me-3" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.232 3.484 8.412-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.309 1.656zm6.29-3.313l.369.218c1.399.828 3.024 1.266 4.679 1.267 4.99 0 9.05-4.061 9.053-9.052 0-2.42-.942-4.693-2.653-6.406-1.71-1.713-3.984-2.651-6.404-2.651-4.991 0-9.05 4.062-9.053 9.053 0 1.691.452 3.34 1.308 4.787l.244.408-1.006 3.676 3.763-.987zm9.646-5.465c-.267-.134-1.579-.779-1.823-.867-.245-.089-.423-.134-.6.134-.177.267-.689.867-.845 1.045-.156.178-.311.2-.578.066-.267-.134-1.127-.415-2.147-1.325-.793-.708-1.328-1.582-1.484-1.848-.156-.266-.017-.411.117-.544.121-.12.267-.311.4-.467.133-.156.177-.267.267-.445.089-.178.044-.334-.022-.467-.067-.133-.6-.1.823-1.068-.219-.529-.4-.454-.544-.454H10.1c-.178 0-.467.067-.711.334-.244.267-.934.912-.934 2.224 0 1.312.956 2.58 1.089 2.758.133.178 1.881 2.872 4.558 4.026.637.275 1.133.439 1.521.562.64.203 1.22.174 1.679.106.512-.077 1.579-.645 1.801-1.268.223-.623.223-1.156.156-1.267-.067-.111-.245-.178-.512-.312z"/></svg>
             Complete on WhatsApp
         </a>
@@ -64,6 +64,7 @@
                     <!-- Reuse customer details for review -->
                     <input type="hidden" name="name" value="{{ request.POST.name }}">
                     <input type="hidden" name="phone" value="{{ request.POST.phone }}">
+                    <input type="hidden" name="whatsapp_url" value="{{ whatsapp_url }}">
                     
                     <div>
                         <label for="comment" class="block mb-2 text-sm font-bold text-slate-700">Comments</label>

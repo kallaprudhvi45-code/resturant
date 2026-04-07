@@ -28,5 +28,8 @@ def submit_review(request):
         if 'show_review_popup' in request.session:
             del request.session['show_review_popup']
             
+        whatsapp_url = request.POST.get('whatsapp_url')
+        if whatsapp_url:
+            return redirect(whatsapp_url)
         return redirect('core:home')
     return redirect('core:home')
