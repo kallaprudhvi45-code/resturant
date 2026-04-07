@@ -190,5 +190,23 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # WhiteNoise production optimizations
 WHITENOISE_KEEP_FILES_ON_COLLECTSTATIC = True
 
+# Logging configuration for production errors
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
+
 # WhatsApp Integration Settings
 WHATSAPP_NUMBER = os.getenv('WHATSAPP_NUMBER', '')
