@@ -164,6 +164,9 @@ STORAGES = {
 CLOUDINARY_URL = os.getenv('CLOUDINARY_URL')
 if CLOUDINARY_URL:
     cloudinary.config(cloudinary_url=CLOUDINARY_URL)
+    CLOUDINARY_STORAGE = {
+        'CLOUDINARY_URL': CLOUDINARY_URL,
+    }
 else:
     CLOUDINARY_STORAGE = {
         'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
