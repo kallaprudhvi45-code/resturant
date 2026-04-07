@@ -1,0 +1,13 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+<div style="background-color: #2c3e50; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <a href="/" style="color: #ecf0f1; text-decoration: none; font-size: 16px; font-weight: bold; border: 1px solid #7f8c8d; padding: 5px 10px; border-radius: 4px; background-color: #34495e;">← Return to Main Website</a>
+</div>
+{% endblock %}

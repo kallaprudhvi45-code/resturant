@@ -42,9 +42,14 @@ def cart_detail(request):
     cart = request.session.get('cart', {})
     cart_items = []
     total_price = 0
+    invalid_items = []
     
     for item_id, quantity in cart.items():
-        food_item = get_object_or_404(FoodItem, id=item_id)
+        try:
+            food_item = FoodItem.objects.get(id=item_id)
+        except FoodItem.DoesNotExist:
+            invalid_items.append(item_id)
+            continue
         subtotal = food_item.price * quantity
         total_price += subtotal
         cart_items.append({
@@ -52,6 +57,12 @@ def cart_detail(request):
             'quantity': quantity,
             'subtotal': subtotal
         })
+    
+    # Clean up invalid items from session
+    if invalid_items:
+        for item_id in invalid_items:
+            del cart[item_id]
+        request.session['cart'] = cart
         
     return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
 
@@ -71,9 +82,17 @@ def checkout(request):
         total_amount = 0
         order_items_data = []
         for item_id, quantity in cart.items():
-            food_item = FoodItem.objects.get(id=item_id)
+            try:
+                food_item = FoodItem.objects.get(id=item_id)
+            except FoodItem.DoesNotExist:
+                continue  # Skip items that don't exist in DB
             total_amount += food_item.price * quantity
             order_items_data.append((food_item, quantity))
+        
+        if not order_items_data:
+            messages.warning(request, "Could not find the items in your cart. Please try again.")
+            request.session['cart'] = {}
+            return redirect('menu:menu_view')
             
         # Create Order
         order = Order.objects.create(
@@ -134,3 +153,4 @@ def checkout(request):
         return render(request, 'order_success.html', {'whatsapp_url': whatsapp_url})
         
     return render(request, 'order.html')
+
