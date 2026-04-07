@@ -162,9 +162,9 @@ STORAGES = {
 
 # Cloudinary configuration
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'dxj5fejau'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '154468853838163'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'pJ5DusbYlk0QyTnl6qYFx1913NA'),
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
 
 # Default primary key field type
