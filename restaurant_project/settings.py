@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+import cloudinary
 
 # Load environment variables from .env file
 load_dotenv()
@@ -50,7 +51,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
+    # Cloudinary
+    'cloudinary_storage',
+    'cloudinary',
+
     # Local Apps
     'menu',
     'orders',
@@ -145,14 +150,21 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# WhiteNoise storage for static files with compression and caching
+# WhiteNoise storage for static files; Cloudinary for media files
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
+}
+
+# Cloudinary configuration
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'dxj5fejau'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '154468853838163'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'pJ5DusbYlk0QyTnl6qYFx1913NA'),
 }
 
 # Default primary key field type
@@ -160,7 +172,7 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Media files
+# Media files (served via Cloudinary in production)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
