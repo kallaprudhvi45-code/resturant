@@ -36,6 +36,10 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,resturant-1-vdtz
 # CSRF trusted origins (required for Django 4+ with HTTPS)
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://resturant-1-vdtz.onrender.com').split(',')
 
+# Security settings for production
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
+
 
 # Application definition
 
@@ -151,14 +155,17 @@ STORAGES = {
     },
 }
 
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# WhiteNoise production optimizations
+WHITENOISE_KEEP_FILES_ON_COLLECTSTATIC = True
 
 # WhatsApp Integration Settings
 WHATSAPP_NUMBER = os.getenv('WHATSAPP_NUMBER', '')
