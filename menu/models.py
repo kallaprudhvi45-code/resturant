@@ -39,3 +39,18 @@ class FoodItem(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        """Override save to prevent re-uploading unchanged images to Cloudinary"""
+        # If this is an existing object, check if the image has actually changed
+        if self.pk:
+            try:
+                existing = FoodItem.objects.get(pk=self.pk)
+                # If image hasn't changed, don't update it
+                if existing.image == self.image:
+                    # Exclude image from update_fields to prevent re-upload
+                    if 'update_fields' in kwargs and kwargs['update_fields'] is not None:
+                        kwargs['update_fields'] = tuple(f for f in kwargs['update_fields'] if f != 'image')
+            except FoodItem.DoesNotExist:
+                pass
+        super().save(*args, **kwargs)
