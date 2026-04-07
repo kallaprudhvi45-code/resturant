@@ -33,6 +33,9 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,resturant-1-vdtz.onrender.com').split(',')
 
+# CSRF trusted origins (required for Django 4+ with HTTPS)
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://resturant-1-vdtz.onrender.com').split(',')
+
 
 # Application definition
 

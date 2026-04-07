@@ -73,10 +73,26 @@ def checkout(request):
         return redirect('menu:menu_view')
         
     if request.method == 'POST':
-        full_name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        address = request.POST.get('address')
-        pincode = request.POST.get('pincode')
+        full_name = request.POST.get('name') or ''
+        phone = request.POST.get('phone') or ''
+        address = request.POST.get('address') or ''
+        pincode = request.POST.get('pincode') or ''
+        
+        # Validate missing fields
+        if not full_name or not phone or not address or not pincode:
+            messages.error(request, "Please fill in all required fields.")
+            return redirect('orders:checkout')
+            
+        # Strip phone to prevent 500 DataError on PostgreSQL which enforces max_length=15
+        phone = "".join(c for c in phone if c.isdigit() or c == '+')
+        if len(phone) > 15:
+            phone = phone[:15]
+            
+        if len(full_name) > 200:
+            full_name = full_name[:200]
+            
+        if len(pincode) > 10:
+            pincode = pincode[:10]
         
         # Calculate total
         total_amount = 0
